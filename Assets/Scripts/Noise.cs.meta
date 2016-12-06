@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 1cc833235d36ee14e9860741a6114752
+timeCreated: 1481036955
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - noiseTexture: {fileID: 2800000, guid: e80c3c84ea861404d8a427db8b7abf04, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
