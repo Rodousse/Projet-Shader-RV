@@ -46,7 +46,7 @@
 					o.pos = mul (UNITY_MATRIX_MVP, v.vertex);	
 			
 					// Background Pixel
-					o.uv_screen = float2(v.vertex.x,  v.vertex.y);
+					o.uv_screen = float2(v.vertex.x,  1-v.vertex.y);
 					// Noise Tiling
 					o.uv_noise = v.texcoord.xyxy;
 
