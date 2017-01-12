@@ -16,10 +16,11 @@ Shader "Custom/Wave"
 	#pragma fragmentoption ARB_fog_exp2
 	#include "UnityCG.cginc"
 
-	sampler2D _GrabTexture : register(s0);
-	float4 _GrabTexture_TexelSize;
+	sampler2D _BackgroundTexture : register(s0);
+	float4 _BackgroundTexture_TexelSize;
 	sampler2D _BumpMap : register(s1);
 	sampler2D _MainTex : register(s2);
+	float _T;
 
 	struct v2f
 	{
@@ -33,12 +34,14 @@ Shader "Custom/Wave"
 
 	half4 frag( v2f i ) : COLOR
 	{
+		_T = _Time[1] % 1;
+		
 		// calculate perturbed coordinates
-		half2 bump = UnpackNormal(tex2D( _BumpMap, i.uvbump )).rg; // we could optimize this by just reading the x & y without reconstructing the Z
-		float2 offset = bump * _BumpAmt * _GrabTexture_TexelSize.xy;
+		half2 bump = UnpackNormal(tex2D( _BumpMap, (i.uvbump-(1-_T)/2)/_T )).xy; // we could optimize this by just reading the x & y without reconstructing the Z
+		float2 offset = bump * (_BumpAmt * (1-_T)) * _BackgroundTexture_TexelSize.xy;
 		i.uvgrab.xy = offset * i.uvgrab.z + i.uvgrab.xy;
-	
-		half4 col = tex2Dproj( _GrabTexture, i.uvgrab );
+
+		half4 col = tex2Dproj( _BackgroundTexture, i.uvgrab );
 		half4 tint = tex2D( _MainTex, i.uvmain );
 		return col * tint;
 	}
@@ -47,14 +50,15 @@ Shader "Custom/Wave"
 	Category
 	{
 		// We must be transparent, so other objects are drawn before this one.
-		Tags { "Queue"="Transparent+100" "RenderType"="Opaque" }
+		Tags { "Queue"="Transparent+100" "RenderType"="Transparent" }
 
 		SubShader 
 		{
 			// This pass grabs the screen behind the object into a texture.
 			// We can access the result in the next pass as _GrabTexture
 			GrabPass
-			{							
+			{
+				"_BackgroundTexture"
 				Name "BASE"
 				Tags { "LightMode" = "Always" }
  			}
