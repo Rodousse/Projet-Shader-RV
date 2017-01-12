@@ -9,6 +9,7 @@ Shader "Custom/Wave"
 		_BumpAmt  ("Distortion", range (0,128)) = 10
 		_MainTex ("Tint Color (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
+		_Speed ("Speed", range (0,2)) = 1
 	}
 
 	CGINCLUDE
@@ -21,6 +22,7 @@ Shader "Custom/Wave"
 	sampler2D _BumpMap : register(s1);
 	sampler2D _MainTex : register(s2);
 	float _T;
+	float _Speed;
 
 	struct v2f
 	{
@@ -34,7 +36,7 @@ Shader "Custom/Wave"
 
 	half4 frag( v2f i ) : COLOR
 	{
-		_T = _Time[1] % 1;
+		_T = (_Time[1]*_Speed) % 1;
 		
 		// calculate perturbed coordinates
 		half2 bump = UnpackNormal(tex2D( _BumpMap, (i.uvbump-(1-_T)/2)/_T )).xy; // we could optimize this by just reading the x & y without reconstructing the Z
