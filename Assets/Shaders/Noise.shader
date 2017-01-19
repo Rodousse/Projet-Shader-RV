@@ -29,7 +29,9 @@
 					float4 pos : SV_POSITION;
 					float2 uv_screen : TEXCOORD0;
 					float4 uv_noise : TEXCOORD1;
-				};						
+				};	
+
+
 
 				inline float3 Overlay(float3 m, float3 color) {
 					color = saturate(color);
@@ -41,10 +43,15 @@
 				
 				v2f vert (vinput v)
 				{
+
+#if UNITY_UV_STARTS_AT_TOP
+					//if (_ScreenTex_TexelSize.y < 0)
+						//v.texcoord.y = 1 - v.texcoord.y;
+#endif
 					v2f o;
 			
 					o.pos = mul (UNITY_MATRIX_MVP, v.vertex);	
-			
+
 					// Background Pixel
 					o.uv_screen = float2(v.vertex.x,  1-v.vertex.y);
 					// Noise Tiling
