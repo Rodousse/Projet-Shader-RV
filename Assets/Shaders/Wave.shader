@@ -10,8 +10,7 @@ Shader "Custom/Wave"
 		_BumpMap ("Normalmap", 2D) = "bump" {}
 
 		_BumpAmt  ("Distortion", range (0,128)) = 10
-		_Speed ("Speed", range (0,100)) = 1
-		_Acceleration ("Acceleration", range (0,2)) = 0.5
+		_Speed ("Speed", range (0,10)) = 1
 		_MaxRange ("MaxRange", range (0,2)) = 1
 	}
 
@@ -41,7 +40,7 @@ Shader "Custom/Wave"
 
 	half4 frag( v2f i ) : COLOR
 	{
-		_T = (pow(_Time[1], _Acceleration)*_Speed) % _MaxRange;
+		_T = (_Time[1] *_Speed) % _MaxRange;
 
 		if(_T < 0.02)
 			_T = 0.02;
