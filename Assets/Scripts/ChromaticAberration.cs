@@ -5,8 +5,6 @@ using UnityStandardAssets.ImageEffects;
 [RequireComponent(typeof(Camera))]
 public class ChromaticAberration : PostEffectsBase
 {
-    
-    public Shader chromaticAberrationShader = null;
     public float tearingSpeed = 1;
     public float tearingIntensity = 1;
     public float fovVariation = 15;
@@ -17,13 +15,11 @@ public class ChromaticAberration : PostEffectsBase
 
     
     
-    public override bool CheckResources()
+    public void Start()
     {
-        m_Camera = gameObject.GetComponent<Camera>();
-        chromaticAberrationMaterial = CheckShaderAndCreateMaterial(chromaticAberrationShader, chromaticAberrationMaterial);
-        if (!isSupported)
-            ReportAutoDisable();
-        return isSupported;
+        
+        chromaticAberrationMaterial = new Material(Shader.Find("Hidden/ChromAber"));
+        
     }
 
     
