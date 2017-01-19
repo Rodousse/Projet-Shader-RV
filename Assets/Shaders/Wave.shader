@@ -6,10 +6,13 @@ Shader "Custom/Wave"
 {
 	Properties
 	{
-		_BumpAmt  ("Distortion", range (0,128)) = 10
 		_MainTex ("Tint Color (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
-		_Speed ("Speed", range (0,2)) = 1
+
+		_BumpAmt  ("Distortion", range (0,128)) = 10
+		_Speed ("Speed", range (0,100)) = 1
+		_Acceleration ("Acceleration", range (0,2)) = 0.5
+		_MaxRange ("MaxRange", range (0,2)) = 1
 	}
 
 	CGINCLUDE
@@ -23,6 +26,8 @@ Shader "Custom/Wave"
 	sampler2D _MainTex : register(s2);
 	float _T;
 	float _Speed;
+	float _Acceleration;
+	float _MaxRange;
 
 	struct v2f
 	{
@@ -36,16 +41,21 @@ Shader "Custom/Wave"
 
 	half4 frag( v2f i ) : COLOR
 	{
-		_T = (_Time[1]*_Speed) % 1;
+		_T = (pow(_Time[1], _Acceleration)*_Speed) % _MaxRange;
+
+		if(_T < 0.02)
+			_T = 0.02;
 		
 		// calculate perturbed coordinates
-		half2 bump = UnpackNormal(tex2D( _BumpMap, (i.uvbump-(1-_T)/2)/_T )).xy; // we could optimize this by just reading the x & y without reconstructing the Z
-		float2 offset = bump * (_BumpAmt * (1-_T)) * _BackgroundTexture_TexelSize.xy;
+		half2 bump = UnpackNormal(tex2D(_BumpMap, (i.uvbump-(1-_T)/2)/_T )).xy; // we could optimize this by just reading the x & y without reconstructing the Z
+		float2 offset = bump * (_BumpAmt * (_MaxRange-_T)) * _BackgroundTexture_TexelSize.xy;
 		i.uvgrab.xy = offset * i.uvgrab.z + i.uvgrab.xy;
 
 		half4 col = tex2Dproj( _BackgroundTexture, i.uvgrab );
-		half4 tint = tex2D( _MainTex, i.uvmain );
-		return col * tint;
+
+		half4 tint = tex2D( _MainTex, (i.uvmain-(1-_T)/2)/_T ) ;
+
+		return lerp(col * tint, col,  _T/_MaxRange);
 	}
 	ENDCG
 
