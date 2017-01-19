@@ -4,9 +4,10 @@ using System.Collections;
 public class Erlenmeyer : MonoBehaviour {
 
     [SerializeField]
-    [Range(0,2)]
+    [Range(0,3)]
     private int ShaderNb;
-	// Use this for initialization
+    // Use this for initialization
+    bool isActivated = false;
 	void Start () {
 	
 	}
@@ -15,21 +16,39 @@ public class Erlenmeyer : MonoBehaviour {
 	void Update () {
         
 	}
-
+    [SerializeField]
+    Camera cam;
     void activate()
     {
-        switch(ShaderNb)
+        if (!isActivated)
         {
-            case(0):
-                Camera.main.GetComponent<ChromaticAberration>().enabled = true;
-                break;
-            case (1):
-                Camera.main.GetComponent<Hue_Shifting>().enabled = true;
-                break;
-            case (2):
-                Camera.main.GetComponent<TrailEffect>().enabled = true;
-                break;
+            Debug.Log("activation");
+            switch (ShaderNb)
+            {
+                case (0):
+                    cam.GetComponent<ChromaticAberration>().isActive = true;
+                    break;
+                case (1):
+                    cam.GetComponent<Hue_Shifting>().isActive = true;
+                    break;
+                case (2):
+                    cam.GetComponent<MotionBlur>().isActive = true;
+                    break;
+                case (3):
+                    cam.GetComponent<UnityStandardAssets.ImageEffects.Noise>().isActive = true;
+                    break;
 
+            }
+            isActivated = true;
+        }
+        
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("MainCamera"))
+        {
+            activate();
         }
     }
 }
