@@ -17,7 +17,7 @@
 				sampler2D _NoiseTex;
 
 				uniform float _NoiseAmount;
-
+				float4 _ScreenTex_TexelSize;
 				struct vinput 
 				{
 					float4 vertex : POSITION;
@@ -44,10 +44,6 @@
 				v2f vert (vinput v)
 				{
 
-#if UNITY_UV_STARTS_AT_TOP
-					//if (_ScreenTex_TexelSize.y < 0)
-						//v.texcoord.y = 1 - v.texcoord.y;
-#endif
 					v2f o;
 			
 					o.pos = mul (UNITY_MATRIX_MVP, v.vertex);	
@@ -62,11 +58,17 @@
 
 				float4 frag ( v2f i ) : SV_Target
 				{
+
 					float4 oldColor = (tex2D (_ScreenTex, i.uv_screen));
 			
 					float3 newColor = (tex2D(_NoiseTex, i.uv_noise.xy) * float4(1,1,1,0)).rgb;
 					newColor = lerp(float3(0.5,0.5,0.5), newColor, _NoiseAmount);
-
+#if UNITY_UV_STARTS_AT_TOP
+					if (_ScreenTex_TexelSize.y < 0)  //this is returning false even when the image is upside down!
+					{
+						i.uv_screen.y = 1 - i.uv_screen.y;
+					}
+#endif
 					return float4(Overlay(newColor, oldColor.rgb), oldColor.a);
 				}
 
