@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-
+using System.Collections;
 // This class implements simple ghosting type Motion Blur.
 // If Extra Blur is selected, the scene will allways be a little blurred,
 // as it is scaled to a smaller resolution.
@@ -10,13 +10,11 @@ using UnityEngine;
     [RequireComponent(typeof(Camera))]
 public class MotionBlur : MonoBehaviour
 {
-    [Range(0.0f, 0.92f)]
-    public float blurAmount = 0.8f;
-    public bool extraBlur = false;
-    public bool isActive = false;
+   
     private RenderTexture accumTexture;
     private Material m_Material;
     public Shader shader;
+
 
 
     protected Material material
@@ -45,45 +43,86 @@ public class MotionBlur : MonoBehaviour
         DestroyImmediate(accumTexture);
     }
 
-    // Called by camera to apply image effect
     void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
-        if (isActive)
+        // Create the accumulation texture
+        if (accumTexture == null || accumTexture.width != source.width || accumTexture.height != source.height)
         {
-            // Create the accumulation texture
-            if (accumTexture == null || accumTexture.width != source.width || accumTexture.height != source.height)
-            {
-                DestroyImmediate(accumTexture);
-                accumTexture = new RenderTexture(source.width, source.height, 0);
-                accumTexture.hideFlags = HideFlags.HideAndDontSave;
-                Graphics.Blit(source, accumTexture);
-            }
-
-            // If Extra Blur is selected, downscale the texture to 4x4 smaller resolution.
-            if (extraBlur)
-            {
-                RenderTexture blurbuffer = RenderTexture.GetTemporary(source.width / 4, source.height / 4, 0);
-                accumTexture.MarkRestoreExpected();
-                Graphics.Blit(accumTexture, blurbuffer);
-                Graphics.Blit(blurbuffer, accumTexture);
-                RenderTexture.ReleaseTemporary(blurbuffer);
-            }
-
-            // Clamp the motion blur variable, so it can never leave permanent trails in the image
-            blurAmount = Mathf.Clamp(blurAmount, 0.0f, 0.92f);
-
-            // Setup the texture and floating point values in the shader
-            material.SetTexture("_MainTex", accumTexture);
-            material.SetFloat("_AccumOrig", 1.0F - blurAmount);
-
-            // We are accumulating motion over frames without clear/discard
-            // by design, so silence any performance warnings from Unity
-            accumTexture.MarkRestoreExpected();
-
-            // Render the image using the motion blur shader
-            Graphics.Blit(source, accumTexture, material);
-            Graphics.Blit(accumTexture, destination);
+            DestroyImmediate(accumTexture);
+            accumTexture = new RenderTexture(source.width, source.height, 0);
+            accumTexture.hideFlags = HideFlags.HideAndDontSave;
+            Graphics.Blit(source, accumTexture);
         }
+
+        // If Extra Blur is selected, downscale the texture to 4x4 smaller resolution.
+        if (extraBlur)
+        {
+            RenderTexture blurbuffer = RenderTexture.GetTemporary(source.width / 4, source.height / 4, 0);
+            accumTexture.MarkRestoreExpected();
+            Graphics.Blit(accumTexture, blurbuffer);
+            Graphics.Blit(blurbuffer, accumTexture);
+            RenderTexture.ReleaseTemporary(blurbuffer);
+        }
+
+        // Clamp the motion blur variable, so it can never leave permanent trails in the image
+        blurAmount = Mathf.Clamp(blurAmount, 0.0f, 0.92f);
+
+        // Setup the texture and floating point values in the shader
+        material.SetTexture("_MainTex", accumTexture);
+        material.SetFloat("_AccumOrig", 1.0F - blurAmount);
+
+        // We are accumulating motion over frames without clear/discard
+        // by design, so silence any performance warnings from Unity
+        accumTexture.MarkRestoreExpected();
+
+        // Render the image using the motion blur shader
+        Graphics.Blit(source, accumTexture, material);
+        Graphics.Blit(accumTexture, destination);
+    }
+
+
+    [Range(0.0f, 0.92f)]
+    float blurAmount = 0f;
+    public bool extraBlur = false;
+
+    [SerializeField, Range(0.0f, 0.92f)]
+    float maxBlurAmount;
+
+    [SerializeField,Range(1,25)]
+    float drugTimeEffect = 10f;
+    [SerializeField,Range(0,0.01f)]
+    float StepValue = 0.02f;
+
+    [SerializeField, Range(0, 3)]
+    float TimeStepValue = 0.02f;
+
+    public void Activate(System.Action callback)
+    {
+        StartCoroutine(animate(callback));
+    }
+
+    IEnumerator animate(System.Action callback)
+    {
+        float _dTimeEffect = drugTimeEffect;
+
+        while (_dTimeEffect >= 0)
+        {
+            if (blurAmount < maxBlurAmount)
+                blurAmount += StepValue;
+            _dTimeEffect -= TimeStepValue;
+            yield return new WaitForSeconds(TimeStepValue);
+        }
+        yield return new WaitForSeconds(2f);
+        while (_dTimeEffect <= drugTimeEffect)
+        {
+            if (blurAmount > 0)
+                blurAmount -= StepValue;
+            _dTimeEffect += TimeStepValue;
+            yield return new WaitForSeconds(TimeStepValue);
+        }
+        blurAmount = 0;
+        callback();
+        yield return null;
     }
 }
 

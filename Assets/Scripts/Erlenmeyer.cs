@@ -1,21 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
-
-public class Erlenmeyer : MonoBehaviour {
-
+public class Erlenmeyer : MonoBehaviour
+{
     [SerializeField]
     [Range(0,3)]
     private int ShaderNb;
     // Use this for initialization
     bool isActivated = false;
-	void Start () {
-	
+
+    public bool canBeUsed = false;
+
+    System.Action callback;
+
+    void Start ()
+    {
+        callback = CallbackOnUse;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-        
-	}
+    void CallbackOnUse()
+    {
+        isActivated = false;
+        canBeUsed = true;
+    }
+
     [SerializeField]
     Camera cam;
     void activate()
@@ -26,16 +33,16 @@ public class Erlenmeyer : MonoBehaviour {
             switch (ShaderNb)
             {
                 case (0):
-                    cam.GetComponent<ChromaticAberration>().isActive = true;
+                    cam.GetComponent<ChromaticAberration>().Activate(callback);
                     break;
                 case (1):
-                    cam.GetComponent<Hue_Shifting>().isActive = true;
+                    cam.GetComponent<Hue_Shifting>().Activate(callback);
                     break;
                 case (2):
-                    cam.GetComponent<MotionBlur>().isActive = true;
+                    cam.GetComponent<MotionBlur>().Activate(callback);
                     break;
                 case (3):
-                    cam.GetComponent<UnityStandardAssets.ImageEffects.Noise>().isActive = true;
+                    cam.GetComponent<UnityStandardAssets.ImageEffects.Noise>().Activate(callback);
                     break;
 
             }
@@ -46,7 +53,7 @@ public class Erlenmeyer : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("MainCamera"))
+        if(other.CompareTag("MainCamera") && canBeUsed)
         {
             activate();
         }

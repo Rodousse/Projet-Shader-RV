@@ -28,41 +28,50 @@ public class ViveController : MonoBehaviour
         isHandled = false;
     }
     bool isInContact = false;
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision other)
     {
-        if(other.CompareTag("Pots"))
+        if(other.gameObject.CompareTag("Pots"))
         {
             isInContact = true;
             erl = other.gameObject;
         }
     }
 
-    void OnTriggerExit(Collider other)
+
+    void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Pots"))
+        if (other.CompareTag("Door"))
         {
+            Debug.Log("OpenDoor");
+            other.gameObject.GetComponent<Door>().Open();
+        }
+    }
+    void OnCollisionExit(Collision other)
+    {
+        if(other.gameObject.CompareTag("Pots") && isHandled == false)
+        {
+            Debug.Log("exit coll");
             isInContact = false;
         }
     }
     void Update()
     {
-        if(isHandled==false)
+        if(isInContact && erl)
         {
-            if(erl)
+            if (isHandled)
             {
-                erl.GetComponent<Rigidbody>().isKinematic = false;
-                erl.transform.parent = null;
-                erl = null;
-            }
-        }
-        else
-        {
-            if(isInContact)
-            {
-                erl.transform.position = this.transform.localPosition;
                 erl.GetComponent<Rigidbody>().isKinematic = true;
                 erl.transform.rotation = transform.rotation;// transform.rotation * Quaternion.Inverse(other.transform.rotation);
                 erl.transform.parent = this.transform;
+                erl.transform.localPosition = Vector3.zero;
+                erl.GetComponent<Erlenmeyer>().canBeUsed = true;
+            }
+            else
+            {
+                erl.GetComponent<Erlenmeyer>().canBeUsed = false;
+                erl.GetComponent<Rigidbody>().isKinematic = false;
+                erl.transform.parent = null;
+                erl = null;
             }
         }
     }

@@ -46,7 +46,6 @@ public class Door : MonoBehaviour
 
     void EndGame()
     {
-        Debug.Log("C'est fini");
         //Application.Quit();
     }
 }
