@@ -8,6 +8,8 @@ public class Hue_Shifting : MonoBehaviour
     [SerializeField] float m_speedMuliplier;
     float m_HueIncrement;
     Material m_material;
+
+    public bool isActive = false;
     
     void Start()
     {
@@ -21,13 +23,17 @@ public class Hue_Shifting : MonoBehaviour
 
     public void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (m_HueIncrement == 0)
+        if (isActive)
         {
-            Graphics.Blit(source, destination);
-            return;
-        }
 
-        m_material.SetFloat("_HueIncrement", m_HueIncrement);
-        Graphics.Blit(source, destination, m_material);
+            if (m_HueIncrement == 0)
+            {
+                Graphics.Blit(source, destination);
+                return;
+            }
+
+            m_material.SetFloat("_HueIncrement", m_HueIncrement);
+            Graphics.Blit(source, destination, m_material);
+        }
     }
 }

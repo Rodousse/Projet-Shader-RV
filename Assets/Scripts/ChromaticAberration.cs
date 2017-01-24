@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityStandardAssets.ImageEffects;
 
-[RequireComponent(typeof(Camera))]
 public class ChromaticAberration : PostEffectsBase
 {
     public float tearingSpeed = 1;
@@ -12,7 +11,7 @@ public class ChromaticAberration : PostEffectsBase
     private Camera m_Camera;
     private Material chromaticAberrationMaterial = null;
     // Use this for initialization
-
+    public bool isActive = false;
     
     
     public void Start()
@@ -26,10 +25,13 @@ public class ChromaticAberration : PostEffectsBase
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        chromaticAberrationMaterial.SetTexture("_MainTex", source);
-        chromaticAberrationMaterial.SetFloat("_tearingSpeed", tearingSpeed);
-        chromaticAberrationMaterial.SetFloat("_tearingIntensity", tearingIntensity);
-        Camera.current.fieldOfView=  60 + fovVariation - Mathf.Cos(Time.time * tearingSpeed)*(tearingIntensity*fovVariation);
-        Graphics.Blit(source, destination, chromaticAberrationMaterial, 0);
+        if (isActive)
+        {
+            chromaticAberrationMaterial.SetTexture("_MainTex", source);
+            chromaticAberrationMaterial.SetFloat("_tearingSpeed", tearingSpeed);
+            chromaticAberrationMaterial.SetFloat("_tearingIntensity", tearingIntensity);
+            Camera.current.fieldOfView = 60 + fovVariation - Mathf.Cos(Time.time * tearingSpeed) * (tearingIntensity * fovVariation);
+            Graphics.Blit(source, destination, chromaticAberrationMaterial, 0);
+        }
     }
 }
