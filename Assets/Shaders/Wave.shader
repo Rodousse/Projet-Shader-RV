@@ -7,6 +7,7 @@ Shader "Custom/Wave"
 	Properties
 	{
 		_MainTex ("Tint Color (RGB)", 2D) = "white" {}
+		_TintIntensity ("Tint Intensity", range(0,1)) = 1
 		_BumpMap ("Normalmap", 2D) = "bump" {}
 
 		_BumpAmt  ("Distortion", range (0,128)) = 10
@@ -27,6 +28,7 @@ Shader "Custom/Wave"
 	float _Speed;
 	float _Acceleration;
 	float _MaxRange;
+	float _TintIntensity;
 
 	struct v2f
 	{
@@ -52,9 +54,9 @@ Shader "Custom/Wave"
 
 		half4 col = tex2Dproj( _BackgroundTexture, i.uvgrab );
 
-		half4 tint = tex2D( _MainTex, (i.uvmain-(1-_T)/2)/_T ) ;
+		half4 tint = tex2D( _MainTex, (i.uvmain-(1-_T)/2)/_T );
 
-		return lerp(col * tint, col,  _T/_MaxRange);
+		return lerp(col, col * tint,  _T/_MaxRange * _TintIntensity);
 	}
 	ENDCG
 

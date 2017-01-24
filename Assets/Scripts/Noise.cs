@@ -6,10 +6,11 @@ namespace UnityStandardAssets.ImageEffects
     [RequireComponent(typeof(Camera))]
     public class Noise : PostEffectsBase
     {
-        [Range(0, 1)]
-        public float intensityMultiplier = 0.25f;
+        [SerializeField, Range(0, 1)]
+        float intensityMultiplier = 0.25f;
 
-        public Texture2D noiseTexture;
+        [SerializeField]
+        Texture2D noiseTexture;
         Material m_material = null;
         static float TILE_AMOUNT = 64;
 
