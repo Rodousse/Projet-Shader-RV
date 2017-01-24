@@ -43,7 +43,7 @@
 			sampler2D _MainTex;
 			float _tearingSpeed;
 			float _tearingIntensity;
-
+			float4 _MainTex_TexelSize;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -56,6 +56,13 @@
 
 				col *= (1.0 - amount * 0.5);
 				col.a = 1.0;
+
+#if UNITY_UV_STARTS_AT_TOP
+				if (_MainTex_TexelSize.y < 0)  //this is returning false even when the image is upside down!
+				{
+					i.vertex.y = 1 - i.vertex.y;
+				}
+#endif
 				return col;
 	
 				//fragColor = vec4(col,1.0);
