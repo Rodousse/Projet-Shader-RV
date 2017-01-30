@@ -6,13 +6,14 @@ public class ViveController : MonoBehaviour
 {
     public float Range = 2500;
     private SteamVR_TrackedController controller;
-	// Use this for initialization
-	void OnEnable ()
+    private Vector3 m_previousPos;
+    // Use this for initialization
+    void OnEnable()
     {
         controller = GetComponent<SteamVR_TrackedController>();
         controller.TriggerClicked += HandleTriggerEvent;
         controller.TriggerUnclicked += HandleTriggerEventRelease;
-	}
+    }
     [SerializeField]
     GameObject erl;
 
@@ -21,6 +22,7 @@ public class ViveController : MonoBehaviour
     void HandleTriggerEvent(object sender, ClickedEventArgs e)
     {
         isHandled = true;
+        m_previousPos = transform.position;
     }
 
     void HandleTriggerEventRelease(object sender, ClickedEventArgs e)
@@ -30,7 +32,7 @@ public class ViveController : MonoBehaviour
     bool isInContact = false;
     void OnCollisionEnter(Collision other)
     {
-        if(other.gameObject.CompareTag("Pots"))
+        if (other.gameObject.CompareTag("Pots"))
         {
             isInContact = true;
             erl = other.gameObject;
@@ -48,7 +50,7 @@ public class ViveController : MonoBehaviour
     }
     void OnCollisionExit(Collision other)
     {
-        if(other.gameObject.CompareTag("Pots") && isHandled == false)
+        if (other.gameObject.CompareTag("Pots") && isHandled == false)
         {
             Debug.Log("exit coll");
             isInContact = false;
@@ -56,22 +58,33 @@ public class ViveController : MonoBehaviour
     }
     void Update()
     {
-        if(isInContact && erl)
+        if (isInContact && erl)
         {
             if (isHandled)
             {
-                erl.GetComponent<Rigidbody>().isKinematic = true;
-                erl.transform.rotation = transform.rotation;// transform.rotation * Quaternion.Inverse(other.transform.rotation);
-                erl.transform.parent = this.transform;
-                erl.transform.localPosition = Vector3.zero;
-                erl.GetComponent<Erlenmeyer>().canBeUsed = true;
+                if (!erl.GetComponent<ConfigurableJoint>())
+                {
+                    erl.GetComponent<Rigidbody>().isKinematic = true;
+                    erl.transform.rotation = transform.rotation;// transform.rotation * Quaternion.Inverse(other.transform.rotation);
+                    erl.transform.parent = this.transform;
+                    erl.transform.localPosition = Vector3.zero;
+                    erl.GetComponent<Erlenmeyer>().canBeUsed = true;
+                }
+                else
+                {
+                    erl.GetComponent<Rigidbody>().AddForce(m_previousPos - transform.position);
+                    m_previousPos = transform.position;
+                }
             }
             else
             {
-                erl.GetComponent<Erlenmeyer>().canBeUsed = false;
-                erl.GetComponent<Rigidbody>().isKinematic = false;
-                erl.transform.parent = null;
-                erl = null;
+                if (!erl.GetComponent<ConfigurableJoint>())
+                {
+                    erl.GetComponent<Erlenmeyer>().canBeUsed = false;
+                    erl.GetComponent<Rigidbody>().isKinematic = false;
+                    erl.transform.parent = null;
+                    erl = null;
+                }
             }
         }
     }
