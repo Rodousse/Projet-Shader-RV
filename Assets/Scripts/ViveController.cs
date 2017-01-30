@@ -32,11 +32,11 @@ public class ViveController : MonoBehaviour
     bool isInContact = false;
     void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Pots"))
-        {
-            isInContact = true;
-            erl = other.gameObject;
-        }
+        //if (other.gameObject.GetComponent<Rigidbody>())//CompareTag("Pots"))
+        //{
+        //    isInContact = true;
+        //    erl = other.gameObject;
+        //}
     }
 
 
@@ -48,14 +48,24 @@ public class ViveController : MonoBehaviour
             other.gameObject.GetComponent<Door>().Open();
         }
     }
-    void OnCollisionExit(Collision other)
+    void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("Pots") && isHandled == false)
+        if (other.gameObject.GetComponent<Rigidbody>() && other.gameObject != gameObject && !other.CompareTag("MainCamera") && !other.GetComponent<ViveController>())//CompareTag("Pots"))
         {
-            Debug.Log("exit coll");
+            isInContact = true;
+            erl = other.gameObject;
+        }
+
+    }
+    void OnTriggerExit(Collider other)
+    {
+
+        if (other.gameObject.GetComponent<Rigidbody>() && isHandled == false && other.gameObject != gameObject && !other.CompareTag("MainCamera") && !other.GetComponent<ViveController>())
+        {
             isInContact = false;
         }
     }
+   
     void Update()
     {
         if (isInContact && erl)
@@ -66,23 +76,28 @@ public class ViveController : MonoBehaviour
                 {
                     erl.GetComponent<Rigidbody>().isKinematic = true;
                     erl.transform.rotation = transform.rotation;// transform.rotation * Quaternion.Inverse(other.transform.rotation);
-                    erl.transform.parent = this.transform;
+                    if (!erl.GetComponent<ViveController>())
+                        erl.transform.parent = this.transform;
                     erl.transform.localPosition = Vector3.zero;
-                    erl.GetComponent<Erlenmeyer>().canBeUsed = true;
+                    if (erl.GetComponent<Erlenmeyer>())
+                        erl.GetComponent<Erlenmeyer>().canBeUsed = true;
                 }
                 else
                 {
-                    erl.GetComponent<Rigidbody>().AddForce(m_previousPos - transform.position);
-                    m_previousPos = transform.position;
+                    erl.GetComponent<Rigidbody>().AddForce(( transform.position - m_previousPos) * 10);
+
+                    //m_previousPos = transform.position;
                 }
             }
             else
             {
                 if (!erl.GetComponent<ConfigurableJoint>())
                 {
-                    erl.GetComponent<Erlenmeyer>().canBeUsed = false;
+                    if (erl.GetComponent<Erlenmeyer>())
+                        erl.GetComponent<Erlenmeyer>().canBeUsed = false;
                     erl.GetComponent<Rigidbody>().isKinematic = false;
-                    erl.transform.parent = null;
+                    if(!erl.GetComponent<ViveController>())
+                        erl.transform.parent = null;
                     erl = null;
                 }
             }
