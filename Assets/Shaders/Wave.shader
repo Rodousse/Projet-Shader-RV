@@ -39,10 +39,11 @@ Shader "Custom/Wave"
 	};
 
 	uniform float _BumpAmt;
+	uniform float _TimeStart;
 
 	half4 frag( v2f i ) : COLOR
 	{
-		_T = (_Time[1] *_Speed) % _MaxRange;
+		_T = ((_Time[1] - _TimeStart) *_Speed) % _MaxRange;
 
 		if(_T < 0.02)
 			_T = 0.02;

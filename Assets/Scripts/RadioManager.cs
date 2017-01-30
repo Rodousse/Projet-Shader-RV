@@ -3,6 +3,20 @@
 public class RadioManager : MonoBehaviour {
 
     [SerializeField]
+    bool m_powered = true;
+    public bool Powered
+    {
+        set
+        {
+            m_powered = value;
+            UpdatePowered();
+        }
+    }
+
+    [SerializeField]
+    MeshRenderer m_waveRenderer;
+
+    [SerializeField, Space]
     AudioSource m_source;
     [SerializeField]
     AudioLowPassFilter m_lpFilter;
@@ -46,11 +60,26 @@ public class RadioManager : MonoBehaviour {
         }
     }
 
+    public void Switch()
+    {
+        Powered = !m_powered;
+    }
+
     void OnValidate()
     {
+        UpdatePowered();
+
         UpdateIntensity1();
         UpdateIntensity2();
         UpdateIntensity3();
+    }
+
+    void UpdatePowered()
+    {
+        m_source.volume = m_powered ? 0.5f : 0;
+        m_waveRenderer.material.SetFloat("_TintIntensity", m_powered ? 0.5f : 0);
+        m_waveRenderer.material.SetFloat("_BumpAmt", m_powered ? 128 : 0);
+        m_waveRenderer.material.SetFloat("_TimeStart", Time.time);
     }
 
     void UpdateIntensity1()
