@@ -20,7 +20,7 @@ public class Erlenmeyer : MonoBehaviour
     void CallbackOnUse()
     {
         isActivated = false;
-        canBeUsed = true;
+        canBeUsed = false;
     }
 
     [SerializeField]

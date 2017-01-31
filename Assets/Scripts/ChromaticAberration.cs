@@ -4,6 +4,11 @@ using UnityStandardAssets.ImageEffects;
 
 public class ChromaticAberration : PostEffectsBase
 {
+    [SerializeField]
+    AnimationCurve m_curve;
+
+    float m_timeStart;
+
     float tearingSpeed = 0;
     float tearingIntensity = 0;
     float fovVariation = 0;
@@ -14,10 +19,9 @@ public class ChromaticAberration : PostEffectsBase
     
     public void Start()
     {    
-        chromaticAberrationMaterial = new Material(Shader.Find("Hidden/ChromAber"));        
+        chromaticAberrationMaterial = new Material(Shader.Find("Hidden/ChromAber"));
+        m_timeStart = float.MinValue;
     }
-
-    
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -48,7 +52,20 @@ public class ChromaticAberration : PostEffectsBase
 
     public void Activate(System.Action callback)
     {
-        StartCoroutine(animate(callback));
+        //StartCoroutine(animate(callback));
+        m_timeStart = Time.time;
+    }
+
+    public void Update()
+    {
+        float t = m_curve.Evaluate(1 - (Time.time - m_timeStart) / (drugTimeEffect));
+
+        if(m_timeStart + drugTimeEffect > Time.time)
+        {
+            tearingSpeed = t * maxTearingSpeed;
+            tearingIntensity = t * maxTearingIntensity;
+            fovVariation = t * maxFovVariation;
+        }
     }
 
     IEnumerator animate(System.Action callback)
