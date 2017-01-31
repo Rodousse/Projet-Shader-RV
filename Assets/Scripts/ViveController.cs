@@ -7,12 +7,15 @@ public class ViveController : MonoBehaviour
     public float Range = 2500;
     private SteamVR_TrackedController controller;
     private Vector3 m_previousPos;
+
+    Animator m_animator;
     // Use this for initialization
     void OnEnable()
     {
+        m_animator = GetComponentInChildren<Animator>();
         controller = GetComponent<SteamVR_TrackedController>();
-        controller.TriggerClicked += HandleTriggerEvent;
-        controller.TriggerUnclicked += HandleTriggerEventRelease;
+        controller.PadClicked += HandleTriggerEvent;
+        controller.PadUnclicked += HandleTriggerEventRelease;
     }
     [SerializeField]
     GameObject erl;
@@ -30,13 +33,13 @@ public class ViveController : MonoBehaviour
         isHandled = false;
     }
     bool isInContact = false;
-    void OnCollisionEnter(Collision other)
+    void OnCollisionExit(Collision other)
     {
-        //if (other.gameObject.GetComponent<Rigidbody>())//CompareTag("Pots"))
-        //{
-        //    isInContact = true;
-        //    erl = other.gameObject;
-        //}
+        if (other.gameObject.GetComponent<Rigidbody>() && isHandled == false && other.gameObject != gameObject
+            && !other.gameObject.CompareTag("MainCamera") && !other.gameObject.GetComponent<ViveController>())
+        {
+            isInContact = false;
+        }
     }
 
 
@@ -47,9 +50,10 @@ public class ViveController : MonoBehaviour
         if (activable)
             activable.Switch();
     }
-    void OnTriggerStay(Collider other)
+    void OnCollisionStay(Collision other)
     {
-        if (other.gameObject.GetComponent<Rigidbody>() && other.gameObject != gameObject && !other.CompareTag("MainCamera") && !other.GetComponent<ViveController>())//CompareTag("Pots"))
+        if (other.gameObject.GetComponent<Rigidbody>() && other.gameObject != gameObject && !other.gameObject.CompareTag("MainCamera") 
+            && !other.gameObject.GetComponent<ViveController>())//CompareTag("Pots"))
         {
             isInContact = true;
             erl = other.gameObject;
@@ -64,19 +68,23 @@ public class ViveController : MonoBehaviour
             isInContact = false;
         }
     }
-   
+
+    [SerializeField]
+    Transform tr;
     void Update()
     {
         if (isInContact && erl)
         {
             if (isHandled)
             {
+                m_animator.SetBool("grab", true);
+
                 if (!erl.GetComponent<ConfigurableJoint>())
                 {
                     erl.GetComponent<Rigidbody>().isKinematic = true;
                     erl.transform.rotation = transform.rotation;// transform.rotation * Quaternion.Inverse(other.transform.rotation);
                     if (!erl.GetComponent<ViveController>())
-                        erl.transform.parent = this.transform;
+                        erl.transform.parent = tr;// this.transform;
                     erl.transform.localPosition = Vector3.zero;
                     if (erl.GetComponent<Erlenmeyer>())
                         erl.GetComponent<Erlenmeyer>().canBeUsed = true;
@@ -90,6 +98,8 @@ public class ViveController : MonoBehaviour
             }
             else
             {
+                m_animator.SetBool("grab", false);
+
                 if (!erl.GetComponent<ConfigurableJoint>())
                 {
                     if (erl.GetComponent<Erlenmeyer>())
