@@ -7,7 +7,7 @@ public class LightManager : MonoBehaviour {
     [SerializeField, Tooltip("Les lumières à éteindre")]
     GameObject[] m_lights;
 
-    bool m_state = true;
+    bool m_state = false;
 
     public void Switch()
     {
