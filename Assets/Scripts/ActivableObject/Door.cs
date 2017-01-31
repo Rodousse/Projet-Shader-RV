@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-public class Door : MonoBehaviour
+public class Door : IActivable
 {
     Texture2D fadeTexture;
     [SerializeField, Range(0, 1)]
@@ -10,15 +11,11 @@ public class Door : MonoBehaviour
     float alpha = 1.0f;
     int fadeDir = -1;
 
-    Animator m_anim;
-
     void Start()
     {
         fadeTexture = new Texture2D(1, 1);
         fadeTexture.SetPixel(0, 0, Color.black);
         fadeTexture.Apply();
-
-        m_anim = GetComponent<Animator>();
     }
 
     void OnGUI()
@@ -33,12 +30,6 @@ public class Door : MonoBehaviour
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), fadeTexture);
     }
 
-    public void Open()
-    {
-        BeginFade(1);
-        m_anim.SetTrigger("Open");
-    }
-
     void BeginFade(int direction)
     {
         fadeDir = direction;
@@ -46,6 +37,12 @@ public class Door : MonoBehaviour
 
     void EndGame()
     {
-        //Application.Quit();
+        Application.Quit();
+    }
+
+    protected override void Refresh()
+    {
+        BeginFade(1);
+        GetComponent<Animator>().SetTrigger("Open");
     }
 }

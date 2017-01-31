@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
 
-public class RadioManager : MonoBehaviour {
-
-    [SerializeField]
-    bool m_powered = true;
+public class RadioManager : IActivable
+{
     public bool Powered
     {
         set
         {
-            m_powered = value;
+            m_enabled = value;
             UpdatePowered();
         }
     }
@@ -60,12 +58,7 @@ public class RadioManager : MonoBehaviour {
         }
     }
 
-    public void Switch()
-    {
-        Powered = !m_powered;
-    }
-
-    void OnValidate()
+    sealed protected override void Refresh()
     {
         UpdatePowered();
 
@@ -74,12 +67,26 @@ public class RadioManager : MonoBehaviour {
         UpdateIntensity3();
     }
 
+    void Update()
+    {
+        if (m_enabled)
+        {
+            m_waveRenderer.sharedMaterial.SetFloat("_TintIntensity", Mathf.MoveTowards(m_waveRenderer.sharedMaterial.GetFloat("_TintIntensity"), 0.5f, Time.time*2));
+            m_waveRenderer.sharedMaterial.SetFloat("_BumpAmt", Mathf.MoveTowards(m_waveRenderer.sharedMaterial.GetFloat("_BumpAmt"), 128, Time.time*2));
+            m_source.volume = Mathf.MoveTowards(m_source.volume, 0.5f, Time.time*2);
+        }
+        else
+        {
+            m_waveRenderer.sharedMaterial.SetFloat("_TintIntensity", Mathf.MoveTowards(m_waveRenderer.sharedMaterial.GetFloat("_TintIntensity"), 0, Time.time*2));
+            m_waveRenderer.sharedMaterial.SetFloat("_BumpAmt", Mathf.MoveTowards(m_waveRenderer.sharedMaterial.GetFloat("_BumpAmt"), 0, Time.time*2));
+            m_source.volume = Mathf.MoveTowards(m_source.volume, 0, Time.time*2);
+        }
+    }
+
     void UpdatePowered()
     {
-        m_source.volume = m_powered ? 0.5f : 0;
-        m_waveRenderer.material.SetFloat("_TintIntensity", m_powered ? 0.5f : 0);
-        m_waveRenderer.material.SetFloat("_BumpAmt", m_powered ? 128 : 0);
-        m_waveRenderer.material.SetFloat("_TimeStart", Time.time);
+        if(m_enabled)
+            m_waveRenderer.sharedMaterial.SetFloat("_TimeStart", Time.time);
     }
 
     void UpdateIntensity1()

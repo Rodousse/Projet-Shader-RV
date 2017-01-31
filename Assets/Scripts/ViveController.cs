@@ -42,11 +42,10 @@ public class ViveController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Door"))
-        {
-            Debug.Log("OpenDoor");
-            other.gameObject.GetComponent<Door>().Open();
-        }
+        IActivable activable = other.GetComponent<IActivable>();
+
+        if (activable)
+            activable.Switch();
     }
     void OnTriggerStay(Collider other)
     {

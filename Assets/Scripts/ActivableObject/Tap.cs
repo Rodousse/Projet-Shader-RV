@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Tap : MonoBehaviour
+public class Tap : IActivable
 {
     [SerializeField]
     float m_duration = 2;
@@ -16,13 +16,16 @@ public class Tap : MonoBehaviour
 
     void Update()
     {
-        if(m_startTime + m_duration > Time.time)
+        if(m_startTime + m_duration > Time.time && m_enabled)
             m_particleSystemEmission.enabled = true;
         else
+        {
             m_particleSystemEmission.enabled = false;
+            m_enabled = false;
+        }
     }
 
-    public void Activate()
+    sealed protected override void Refresh()
     {
         m_startTime = Time.time;
     }
