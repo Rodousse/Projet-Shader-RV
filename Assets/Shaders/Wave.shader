@@ -98,31 +98,20 @@ Shader "Custom/Wave"
 				{
 					v2f o;
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-					#if UNITY_UV_STARTS_AT_TOP
+
+#if UNITY_UV_STARTS_AT_TOP
 					float scale = -1.0;
-					#else
+#else
 					float scale = 1.0;
-					#endif
-					o.uvgrab.xy = (float2(o.vertex.x, o.vertex.y*scale) + o.vertex.w) * 0.5;
+#endif
+
+					o.uvgrab.xy = (float2(o.vertex.x, o.vertex.y * scale) + o.vertex.w) * 0.5;
 					o.uvgrab.zw = o.vertex.zw;
 					o.uvbump = MultiplyUV( UNITY_MATRIX_TEXTURE1, v.texcoord );
 					o.uvmain = MultiplyUV( UNITY_MATRIX_TEXTURE2, v.texcoord );
 					return o;
 				}
 				ENDCG
-			}
-		}
-
-		// ------------------------------------------------------------------
-		// Fallback for older cards and Unity non-Pro
-	
-		SubShader 
-		{
-			Blend DstColor Zero
-			Pass 
-			{
-				Name "BASE"
-				SetTexture [_MainTex] {	combine texture }
 			}
 		}
 	}

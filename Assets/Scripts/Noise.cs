@@ -37,20 +37,18 @@ namespace UnityStandardAssets.ImageEffects
             for (float x1 = 0; x1 < 1; x1 += stepSizeX)
                 for (float y1 = 0; y1 < 1; y1 += stepSizeY)
                 {
-                    float XStart = UnityEngine.Random.Range(0.0f, 1.0f);
-                    float YStart = UnityEngine.Random.Range(0.0f, 1.0f);
+                    float XStart = UnityEngine.Random.Range(0.0f, 1.0f);    // On détermine une valeur aléatoire
+                    float YStart = UnityEngine.Random.Range(0.0f, 1.0f);    // en X et en Y
 
                     float texTileSize = (noiseTexture.width / noiseTexture.width) / TILE_AMOUNT;
 
+                    // On dessine les quads et on déplace les coordonnées UV de la texture de noise
                     GL.MultiTexCoord2(0, XStart * TILE_AMOUNT, YStart * TILE_AMOUNT);
                     GL.Vertex3(x1, y1, 0);
-
                     GL.MultiTexCoord2(0, (XStart + texTileSize) * TILE_AMOUNT, YStart * TILE_AMOUNT);
                     GL.Vertex3(x1 + stepSizeX, y1, 0);
-
                     GL.MultiTexCoord2(0, (XStart + texTileSize) * TILE_AMOUNT, (YStart + texTileSize) * TILE_AMOUNT);
                     GL.Vertex3(x1 + stepSizeX, y1 + stepSizeY, 0);
-
                     GL.MultiTexCoord2(0, XStart * TILE_AMOUNT, (YStart + texTileSize) * TILE_AMOUNT);
                     GL.Vertex3(x1, y1 + stepSizeY, 0);
                 }
