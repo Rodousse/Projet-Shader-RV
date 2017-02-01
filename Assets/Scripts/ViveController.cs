@@ -86,8 +86,6 @@ public class ViveController : MonoBehaviour
                     if (!erl.GetComponent<ViveController>())
                         erl.transform.parent = tr;// this.transform;
                     erl.transform.localPosition = Vector3.zero;
-                    if (erl.GetComponent<Erlenmeyer>())
-                        erl.GetComponent<Erlenmeyer>().canBeUsed = true;
                 }
                 else
                 {
@@ -102,8 +100,6 @@ public class ViveController : MonoBehaviour
 
                 if (!erl.GetComponent<ConfigurableJoint>())
                 {
-                    if (erl.GetComponent<Erlenmeyer>())
-                        erl.GetComponent<Erlenmeyer>().canBeUsed = false;
                     erl.GetComponent<Rigidbody>().isKinematic = false;
                     if(!erl.GetComponent<ViveController>())
                         erl.transform.parent = null;

@@ -7,15 +7,12 @@ using System.Collections;
 // The effect works by accumulating the previous frames in an accumulation
 // texture.
 
-    [RequireComponent(typeof(Camera))]
-public class MotionBlur : MonoBehaviour
+[RequireComponent(typeof(Camera))]
+public class MotionBlur : ParametricEffect
 {
-   
     private RenderTexture accumTexture;
     private Material m_Material;
     public Shader shader;
-
-
 
     protected Material material
     {
@@ -29,16 +26,8 @@ public class MotionBlur : MonoBehaviour
             return m_Material;
         }
     }
-    void Start()
-    {
-        if (!SystemInfo.supportsRenderTextures)
-        {
-            enabled = false;
-            return;
-        }
-    }
 
-        void OnDisable()
+    void OnDisable()
     {
         DestroyImmediate(accumTexture);
     }
@@ -80,7 +69,6 @@ public class MotionBlur : MonoBehaviour
         Graphics.Blit(accumTexture, destination);
     }
 
-
     [Range(0.0f, 0.92f)]
     float blurAmount = 0f;
     public bool extraBlur = false;
@@ -88,41 +76,18 @@ public class MotionBlur : MonoBehaviour
     [SerializeField, Range(0.0f, 0.92f)]
     float maxBlurAmount;
 
-    [SerializeField,Range(1,25)]
-    float drugTimeEffect = 10f;
-    [SerializeField,Range(0,0.01f)]
-    float StepValue = 0.02f;
-
-    [SerializeField, Range(0, 3)]
-    float TimeStepValue = 0.02f;
-
-    public void Activate(System.Action callback)
+    protected override void Init()
     {
-        StartCoroutine(animate(callback));
+        if (!SystemInfo.supportsRenderTextures)
+        {
+            enabled = false;
+            return;
+        }
     }
 
-    IEnumerator animate(System.Action callback)
+    protected override void UpdateSettings(float t)
     {
-        float _dTimeEffect = drugTimeEffect;
-
-        while (_dTimeEffect >= 0)
-        {
-            if (blurAmount < maxBlurAmount)
-                blurAmount += StepValue;
-            _dTimeEffect -= TimeStepValue;
-            yield return new WaitForSeconds(TimeStepValue);
-        }
-        yield return new WaitForSeconds(2f);
-        while (_dTimeEffect <= drugTimeEffect)
-        {
-            if (blurAmount > 0)
-                blurAmount -= StepValue;
-            _dTimeEffect += TimeStepValue;
-            yield return new WaitForSeconds(TimeStepValue);
-        }
-        blurAmount = 0;
-        callback();
-        yield return null;
+        blurAmount = t * maxBlurAmount;
     }
 }
 

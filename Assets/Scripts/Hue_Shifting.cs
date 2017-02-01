@@ -1,24 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 [RequireComponent(typeof(Camera))]
-public class Hue_Shifting : MonoBehaviour
+public class Hue_Shifting : ParametricEffect
 {
-   
-
     float m_HueIncrement;
     Material m_material;
     
-    void Start()
-    {
-        m_material = new Material(Shader.Find("Hidden/Hue_Shifting"));
-    }
-
-    void Update()
-    {
-        m_HueIncrement = Mathf.Sin(Time.time * m_speedMuliplier) * m_intensity /2;
-    }
-
     public void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         if (m_HueIncrement == 0)
@@ -41,47 +30,15 @@ public class Hue_Shifting : MonoBehaviour
     [SerializeField]
     float maxSpeedMultiplier;
 
-
-    [SerializeField, Range(1, 25)]
-    float drugTimeEffect = 10f;
-
-    [SerializeField, Range(0, 0.01f)]
-    float StepValue = 0.02f;
-
-    [SerializeField, Range(0, 3)]
-    float TimeStepValue = 0.02f;
-
-    public void Activate(System.Action callback)
+    protected override void Init()
     {
-        StartCoroutine(animate(callback));
+        m_material = new Material(Shader.Find("Hidden/Hue_Shifting"));
     }
 
-    IEnumerator animate(System.Action callback)
+    protected override void UpdateSettings(float t)
     {
-        float _dTimeEffect = drugTimeEffect;
-
-        while (_dTimeEffect >= 0)
-        {
-            if (m_speedMuliplier < maxSpeedMultiplier)
-                m_speedMuliplier += StepValue;
-            if (m_intensity < maxIntensity)
-                m_intensity += StepValue;
-            _dTimeEffect -= TimeStepValue;
-            yield return new WaitForSeconds(TimeStepValue);
-        }
-        yield return new WaitForSeconds(2f);
-        while (_dTimeEffect <= drugTimeEffect)
-        {
-            if (m_speedMuliplier > 0)
-                m_speedMuliplier -= StepValue;
-            if (m_intensity > 0)
-                m_intensity -= StepValue;
-            _dTimeEffect += TimeStepValue;
-            yield return new WaitForSeconds(TimeStepValue);
-        }
-        m_intensity = 0;
-        m_speedMuliplier = 0;
-        callback();
-        yield return null;
+        m_speedMuliplier = t * maxSpeedMultiplier;
+        m_intensity = t * maxIntensity;
+        m_HueIncrement = Mathf.Sin(Time.time * m_speedMuliplier) * m_intensity / 2;
     }
 }

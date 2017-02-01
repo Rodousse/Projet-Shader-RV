@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace UnityStandardAssets.ImageEffects
 {
     [RequireComponent(typeof(Camera))]
-    public class Noise : PostEffectsBase
+    public class Noise : ParametricEffect
     {
         [SerializeField]
         Texture2D noiseTexture;
@@ -36,8 +37,8 @@ namespace UnityStandardAssets.ImageEffects
             for (float x1 = 0; x1 < 1; x1 += stepSizeX)
                 for (float y1 = 0; y1 < 1; y1 += stepSizeY)
                 {
-                    float XStart = Random.Range(0.0f, 1.0f);
-                    float YStart = Random.Range(0.0f, 1.0f);
+                    float XStart = UnityEngine.Random.Range(0.0f, 1.0f);
+                    float YStart = UnityEngine.Random.Range(0.0f, 1.0f);
 
                     float texTileSize = (noiseTexture.width / noiseTexture.width) / TILE_AMOUNT;
 
@@ -64,43 +65,14 @@ namespace UnityStandardAssets.ImageEffects
         [SerializeField, Range(0, 1)]
         float maxIntensityMultiplier;
 
-        [SerializeField, Range(1, 25)]
-        float drugTimeEffect = 10f;
-
-        [SerializeField, Range(0, 0.01f)]
-        float StepValue = 0.02f;
-
-        [SerializeField, Range(0, 3)]
-        float TimeStepValue = 0.02f;
-
-        public void Activate(System.Action callback)
+        protected override void Init()
         {
-            StartCoroutine(animate(callback));
+
         }
 
-        IEnumerator animate(System.Action callback)
+        protected override void UpdateSettings(float t)
         {
-            float _dTimeEffect = drugTimeEffect;
-
-            while (_dTimeEffect >= 0)
-            {
-                if (intensityMultiplier < maxIntensityMultiplier)
-                    intensityMultiplier += StepValue;
-                _dTimeEffect -= TimeStepValue;
-                yield return new WaitForSeconds(TimeStepValue);
-            }
-            yield return new WaitForSeconds(2f);
-            while(_dTimeEffect<=drugTimeEffect)
-            {
-                if (intensityMultiplier > 0)
-                    intensityMultiplier -= StepValue;
-                _dTimeEffect += TimeStepValue;
-                yield return new WaitForSeconds(TimeStepValue);
-            }
-            intensityMultiplier = 0;
-            callback();
-            yield return null;
+            intensityMultiplier = t * maxIntensityMultiplier;
         }
-
     }
 }
