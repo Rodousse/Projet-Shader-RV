@@ -1,0 +1,8 @@
+<linker>
+	<assembly fullname="UnityEngine">
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.Collision" preserve="nothing"/>
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.ControllerColliderHit" preserve="nothing"/>
+	</assembly>
+</linker>

@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /Users/builduser/buildslave/mono-runtime-and-classlibs/build/tmp/monoprefix/bin/mono $MONO_OPTIONS /Users/builduser/buildslave/mono-runtime-and-classlibs/build/tmp/monoprefix/lib/mono/4.5/disco.exe "$@"

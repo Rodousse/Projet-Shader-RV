@@ -1,0 +1,16 @@
+<linker>
+	<assembly fullname="UnityEngine">
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.AnimationEvent" preserve="nothing"/>
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.AnimatorStateInfo" preserve="nothing"/>
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.AnimatorTransitionInfo" preserve="nothing"/>
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.Experimental.Director.CustomAnimationPlayable" preserve="nothing"/>
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.HumanBone" preserve="nothing"/>
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.SkeletonBone" preserve="nothing"/>
+	</assembly>
+</linker>

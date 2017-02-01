@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /Users/builduser/buildslave/mono-runtime-and-classlibs/build/tmp/monoprefix/bin/mono $MONO_OPTIONS /Users/builduser/buildslave/mono-runtime-and-classlibs/build/tmp/monoprefix/lib/mono/mono-configuration-crypto/4.5/mono-configuration-crypto.exe "$@"

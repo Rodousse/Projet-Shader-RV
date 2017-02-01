@@ -1,0 +1,8 @@
+<linker>
+	<assembly fullname="UnityEngine">
+	</assembly>
+	<dependencies>
+		<module name="UnityConnect"/>
+		<module name="CloudWebServices"/>
+	</dependencies>
+</linker>

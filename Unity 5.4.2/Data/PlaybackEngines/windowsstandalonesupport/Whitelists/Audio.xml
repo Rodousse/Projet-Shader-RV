@@ -1,0 +1,13 @@
+<linker>
+	<assembly fullname="UnityEngine">
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.AudioClip" preserve="nothing">
+			<method name="InvokePCMReaderCallback_Internal"/>
+			<method name="InvokePCMSetPositionCallback_Internal"/>
+		</type>
+<!--GENERATED FILE. DO NOT HAND EDIT. Use "./jam GenerateNativeDependenciesForManagedCode" to rebuild!-->
+		<type fullname="UnityEngine.AudioSettings" preserve="nothing">
+			<method name="InvokeOnAudioConfigurationChanged"/>
+		</type>
+	</assembly>
+</linker>

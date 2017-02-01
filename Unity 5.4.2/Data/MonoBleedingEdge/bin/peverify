@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /Users/builduser/buildslave/mono-runtime-and-classlibs/build/tmp/monoprefix/bin/pedump $MONO_OPTIONS --verify metadata,code "$@"
