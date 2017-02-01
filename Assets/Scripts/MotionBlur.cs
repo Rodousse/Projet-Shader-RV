@@ -88,6 +88,7 @@ public class MotionBlur : ParametricEffect
     protected override void UpdateSettings(float t)
     {
         blurAmount = t * maxBlurAmount;
+        m_radio.Intensity3 = t;
     }
 }
 

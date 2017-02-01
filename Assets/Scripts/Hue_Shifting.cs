@@ -40,5 +40,6 @@ public class Hue_Shifting : ParametricEffect
         m_speedMuliplier = t * maxSpeedMultiplier;
         m_intensity = t * maxIntensity;
         m_HueIncrement = Mathf.Sin(Time.time * m_speedMuliplier) * m_intensity / 2;
+        
     }
 }

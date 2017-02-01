@@ -7,6 +7,8 @@ public abstract class ParametricEffect : PostEffectsBase
     AnimationCurve m_curve;
     [SerializeField, Range(1, 25)]
     float m_TimeEffect = 10f;
+    [SerializeField]
+    protected RadioManager m_radio;
 
     protected float m_timeStart;
 

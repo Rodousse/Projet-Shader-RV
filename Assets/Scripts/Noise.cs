@@ -73,6 +73,7 @@ namespace UnityStandardAssets.ImageEffects
         protected override void UpdateSettings(float t)
         {
             intensityMultiplier = t * maxIntensityMultiplier;
+            m_radio.Intensity2 = t;
         }
     }
 }
