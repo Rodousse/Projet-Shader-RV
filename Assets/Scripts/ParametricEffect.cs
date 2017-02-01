@@ -22,13 +22,16 @@ public abstract class ParametricEffect : PostEffectsBase
 
     void Update()
     {
-        if (m_timeStart + m_TimeEffect > Time.time)
+        if (Time.time < m_timeStart + m_TimeEffect)
             UpdateSettings(CurveValue);
     }
 
     public void Activate()
     {
-        m_timeStart = Time.time;
+        if(Time.time > m_timeStart + m_TimeEffect)
+            m_timeStart = Time.time;
+        else if (Time.time > m_timeStart + m_TimeEffect/2)
+            m_timeStart += Mathf.Abs(Time.time - (m_timeStart + m_TimeEffect/2)) * 2;
     }
 
     protected new void Start () {
