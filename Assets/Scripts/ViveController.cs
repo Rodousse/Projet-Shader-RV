@@ -84,7 +84,10 @@ public class ViveController : MonoBehaviour
                     erl.GetComponent<Rigidbody>().isKinematic = true;
                     erl.transform.rotation = transform.rotation;// transform.rotation * Quaternion.Inverse(other.transform.rotation);
                     if (!erl.GetComponent<ViveController>())
-                        erl.transform.parent = tr;// this.transform;
+                    {
+                        tr.GetComponent<ConfigurableJoint>().connectedBody = erl.GetComponent<Rigidbody>();
+                    }
+                        //erl.transform.parent = tr;// this.transform;
                     erl.transform.localPosition = Vector3.zero;
                 }
                 else
