@@ -7,6 +7,8 @@ public class ViveController : MonoBehaviour
     public float Range = 2500;
     private SteamVR_TrackedController controller;
     private Vector3 m_previousPos;
+    [Range(100,2000)]
+    public int HapticPower = 2000;
 
     Animator m_animator;
     // Use this for initialization
@@ -44,13 +46,15 @@ public class ViveController : MonoBehaviour
         {
             isInContact = false;
         }
+
     }
+
+    
 
 
     void OnTriggerEnter(Collider other)
     {
         IActivable activable = other.GetComponent<IActivable>();
-
         if (activable)
             activable.Switch();
         
@@ -73,6 +77,8 @@ public class ViveController : MonoBehaviour
             erl = other.gameObject;
             
         }
+        SteamVR_Controller.Input((int)gameObject.GetComponent<SteamVR_TrackedController>().controllerIndex).TriggerHapticPulse((ushort)HapticPower);
+
 
     }
     void OnTriggerExit(Collider other)
