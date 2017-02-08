@@ -28,9 +28,7 @@ public class ViveControllerManager : MonoBehaviour
     {
         bool leftTrigger = m_leftStick.GetComponent<SteamVR_TrackedController>().triggerPressed;
         bool rightTrigger = m_rightStick.GetComponent<SteamVR_TrackedController>().triggerPressed;
-
-        Run(transform.forward);
-
+        
         if (m_step > m_stepThreshold)
         {
             m_step -= m_stepThreshold;
