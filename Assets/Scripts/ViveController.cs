@@ -100,10 +100,15 @@ public class ViveController : MonoBehaviour
             {
                 m_animator.SetBool("grab", true);
 
-                if (erl.GetComponent<ConfigurableJoint>())
-                { 
-                    erl.GetComponent<Rigidbody>().AddForce(( transform.position - m_previousPos) * 10);
+                if (!erl.GetComponent<ConfigurableJoint>())
+                {
+                    erl.transform.rotation = tr.transform.rotation;
                 }
+                else
+                {
+                    erl.GetComponent<Rigidbody>().AddForce((transform.position - m_previousPos) * 10);
+                }
+
             }
             else
             {
