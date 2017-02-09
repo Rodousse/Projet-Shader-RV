@@ -36,7 +36,8 @@ public class ViveController : MonoBehaviour
     {
         isHandled = false;
         tr.gameObject.GetComponent<ConfigurableJoint>().connectedBody = null;
-        
+        m_animator.SetBool("grab", false);
+
     }
     bool isInContact = false;
     void OnCollisionExit(Collision other)
