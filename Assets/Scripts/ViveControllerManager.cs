@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
-using Valve.VR;
-using System.Collections.Generic;
+
 public class ViveControllerManager : MonoBehaviour
 {
     [SerializeField]
@@ -10,15 +8,32 @@ public class ViveControllerManager : MonoBehaviour
     [SerializeField]
     ViveController m_rightStick;
 
-    private Vector3 m_rPos;
-    private Vector3 m_lPos;
+    AudioSource m_audioSource;
+    [SerializeField]
+    AudioClip[] m_stepsAudioClip;
+
+    Vector3 m_rPos;
+    Vector3 m_lPos;
+
+    [SerializeField]
+    float m_stepThreshold = 0.5f;
+    float m_step = 0;
+
+    void Start()
+    {
+        m_audioSource = GetComponent<AudioSource>();
+    }
 
 	void Update ()
     {
-
-
         bool leftTrigger = m_leftStick.GetComponent<SteamVR_TrackedController>().triggerPressed;
         bool rightTrigger = m_rightStick.GetComponent<SteamVR_TrackedController>().triggerPressed;
+        
+        if (m_step > m_stepThreshold)
+        {
+            m_step -= m_stepThreshold;
+            m_audioSource.PlayOneShot(m_stepsAudioClip[Random.Range(0, m_stepsAudioClip.Length)]);
+        }
 
         if (leftTrigger && rightTrigger)
         {
@@ -37,7 +52,6 @@ public class ViveControllerManager : MonoBehaviour
                 {
                     velocity = (rvel - lvel) / 2;
                     Run(velocity);
-
                 }                  
 
             }
@@ -72,6 +86,9 @@ public class ViveControllerManager : MonoBehaviour
         vel.y = 0;
         Vector3 nVel = vel.magnitude * SumForCtrl * maxSpeed;
         nVel.y = 0;
+
+        m_step += nVel.magnitude;
+
         areaZone.velocity = Vector3.MoveTowards(areaZone.velocity,nVel, speedAccel*Time.deltaTime);
     }
 }

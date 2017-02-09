@@ -41,6 +41,6 @@ public class ChromaticAberration : ParametricEffect
         tearingSpeed = t * maxTearingSpeed;
         tearingIntensity = t * maxTearingIntensity;
         fovVariation = t * maxFovVariation;
-        m_radio.Intensity1 = t;
+        m_radio.m_intensity1 = t;
     }
 }
