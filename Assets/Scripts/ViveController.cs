@@ -7,6 +7,8 @@ public class ViveController : MonoBehaviour
     public float Range = 2500;
     private SteamVR_TrackedController controller;
     private Vector3 m_previousPos;
+    [Range(100,2000)]
+    public int HapticPower = 2000;
 
     Animator m_animator;
     // Use this for initialization
@@ -25,12 +27,16 @@ public class ViveController : MonoBehaviour
     void HandleTriggerEvent(object sender, ClickedEventArgs e)
     {
         isHandled = true;
+
+        
         m_previousPos = transform.position;
     }
 
     void HandleTriggerEventRelease(object sender, ClickedEventArgs e)
     {
         isHandled = false;
+        tr.gameObject.GetComponent<ConfigurableJoint>().connectedBody = null;
+        
     }
     bool isInContact = false;
     void OnCollisionExit(Collision other)
@@ -40,15 +46,18 @@ public class ViveController : MonoBehaviour
         {
             isInContact = false;
         }
+
     }
+
+    
 
 
     void OnTriggerEnter(Collider other)
     {
         IActivable activable = other.GetComponent<IActivable>();
-
         if (activable)
             activable.Switch();
+        
     }
     void OnCollisionStay(Collision other)
     {
@@ -56,8 +65,20 @@ public class ViveController : MonoBehaviour
             && !other.gameObject.GetComponent<ViveController>())//CompareTag("Pots"))
         {
             isInContact = true;
+            if (!erl && isHandled)
+            {
+                erl = other.gameObject;
+                if (!erl.GetComponent<ViveController>() && !erl.GetComponent<ConfigurableJoint>())
+                {
+                    erl.transform.position = tr.transform.position;
+                    tr.gameObject.GetComponent<ConfigurableJoint>().connectedBody = erl.GetComponent<Rigidbody>();
+                }
+            }
             erl = other.gameObject;
+            
         }
+        SteamVR_Controller.Input((int)gameObject.GetComponent<SteamVR_TrackedController>().controllerIndex).TriggerHapticPulse((ushort)HapticPower);
+
 
     }
     void OnTriggerExit(Collider other)
@@ -81,28 +102,23 @@ public class ViveController : MonoBehaviour
 
                 if (!erl.GetComponent<ConfigurableJoint>())
                 {
-                    erl.GetComponent<Rigidbody>().isKinematic = true;
-                    erl.transform.rotation = transform.rotation;// transform.rotation * Quaternion.Inverse(other.transform.rotation);
-                    if (!erl.GetComponent<ViveController>())
-                        erl.transform.parent = tr;// this.transform;
-                    erl.transform.localPosition = Vector3.zero;
+                    erl.transform.rotation = tr.transform.rotation;
                 }
                 else
                 {
-                    erl.GetComponent<Rigidbody>().AddForce(( transform.position - m_previousPos) * 10);
-
-                    //m_previousPos = transform.position;
+                    erl.GetComponent<Rigidbody>().AddForce((transform.position - m_previousPos) * 10);
                 }
+
             }
             else
             {
                 m_animator.SetBool("grab", false);
-
+                
+                
+                
                 if (!erl.GetComponent<ConfigurableJoint>())
                 {
-                    erl.GetComponent<Rigidbody>().isKinematic = false;
-                    if(!erl.GetComponent<ViveController>())
-                        erl.transform.parent = null;
+                    
                     erl = null;
                 }
             }
