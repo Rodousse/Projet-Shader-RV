@@ -88,7 +88,19 @@ public class ViveControllerManager : MonoBehaviour
         nVel.y = 0;
 
         m_step += nVel.magnitude;
+        RaycastHit info;
 
-        areaZone.velocity = Vector3.MoveTowards(areaZone.velocity,nVel, speedAccel*Time.deltaTime);
+        Physics.SphereCast(areaZone.position, 0.25f, SumForCtrl, out info);
+        if (info.collider != null && info.collider.CompareTag("Obstacles"))
+        {
+            areaZone.velocity = Vector3.zero;
+            Debug.Log(info.collider.name);
+            areaZone.isKinematic = true;
+            areaZone.isKinematic = false;
+        }
+        else
+        {
+            areaZone.velocity = Vector3.MoveTowards(areaZone.velocity, nVel, speedAccel * Time.deltaTime);
+        }
     }
 }

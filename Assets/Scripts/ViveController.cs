@@ -98,7 +98,11 @@ public class ViveController : MonoBehaviour
         {
             if (isHandled)
             {
-                m_animator.SetBool("grab", true);
+                if (!m_animator.GetBool("grab"))
+                    m_animator.SetBool("grab", true);
+
+               // if (m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime <= 0.75f)
+               //     return;
 
                 if (!erl.GetComponent<ConfigurableJoint>())
                 {
