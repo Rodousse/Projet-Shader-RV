@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ivy-module version="2.0">
-  <info version="5.4.2" organisation="Unity" module="StandaloneWindows" e:packageType="PlaybackEngine" e:unityVersion="5.4.2f2" xmlns:e="http://ant.apache.org/ivy/extra" />
-  <publications xmlns:e="http://ant.apache.org/ivy/extra">
-    <artifact name="UnityEditor.WindowsStandalone.Extensions" type="dll" ext="dll" />
-  </publications>
-</ivy-module>

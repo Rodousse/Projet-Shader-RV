@@ -1,9 +1,0 @@
-<linker>
-	<assembly fullname="UnityEngine">
-	</assembly>
-	<dependencies>
-		<module name="UnityWebRequest"/>
-		<module name="JSONSerialize"/>
-		<module name="CloudWebServices"/>
-	</dependencies>
-</linker>
