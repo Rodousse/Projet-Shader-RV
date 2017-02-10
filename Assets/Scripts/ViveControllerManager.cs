@@ -3,10 +3,10 @@
 public class ViveControllerManager : MonoBehaviour
 {
     [SerializeField]
-    ViveController m_leftStick;
+    Transform m_leftStick;
 
     [SerializeField]
-    ViveController m_rightStick;
+    Transform m_rightStick;
 
     AudioSource m_audioSource;
     [SerializeField]
@@ -37,10 +37,10 @@ public class ViveControllerManager : MonoBehaviour
 
         if (leftTrigger && rightTrigger)
         {
-            areaZone.drag = 2;
+            areaZone.drag = 0f;
             Vector3 velocity = Vector3.zero;
-            Vector3 rvel = (m_rightStick.transform.position - rOldPos) / Time.deltaTime;
-            Vector3 lvel = (m_leftStick.transform.position - lOldPos) / Time.deltaTime;
+            Vector3 rvel = (m_rightStick.position - rOldPos) / Time.deltaTime;
+            Vector3 lvel = (m_leftStick.position - lOldPos) / Time.deltaTime;
 
             RightMagnitude = rvel.magnitude;
             LeftMagnitude = lvel.magnitude;
@@ -56,8 +56,8 @@ public class ViveControllerManager : MonoBehaviour
 
             }
 
-            lOldPos = m_leftStick.transform.position;
-            rOldPos = m_rightStick.transform.position;
+            lOldPos = m_leftStick.position;
+            rOldPos = m_rightStick.position;
         }
         else
             areaZone.drag = 5;
@@ -82,26 +82,29 @@ public class ViveControllerManager : MonoBehaviour
     float maxSpeed;
     void Run(Vector3 vel)
     {
-        Vector3 SumForCtrl = (m_leftStick.transform.forward+m_rightStick.transform.forward)/ 2;
+        Vector3 SumForCtrl = (m_leftStick.forward+m_rightStick.transform.forward)/ 2;
         vel.y = 0;
         Vector3 nVel = vel.magnitude * SumForCtrl * maxSpeed;
         nVel.y = 0;
 
         m_step += nVel.magnitude;
-        RaycastHit info;
+        //RaycastHit info;
 
-        Vector3 p_pos = transform.position;
-        p_pos.y = 0.2f;
-        Physics.SphereCast(p_pos, 0.33f, SumForCtrl, out info);
-        if (info.collider != null && info.collider.CompareTag("Obstacles"))
-        {
-            areaZone.velocity = Vector3.zero;
-            areaZone.isKinematic = true;
-            areaZone.isKinematic = false;
-        }
-        else
-        {
-            areaZone.velocity = Vector3.MoveTowards(areaZone.velocity, nVel, speedAccel * Time.deltaTime);
-        }
+        //Vector3 p_pos = transform.position;
+        //p_pos.y = 0.2f;
+        //Physics.SphereCast(p_pos, 0.33f, SumForCtrl, out info);
+        //if (info.collider != null && info.collider.CompareTag("Obstacles"))
+        //{
+        //    areaZone.velocity = Vector3.zero;
+        //    areaZone.isKinematic = true;
+        //    areaZone.isKinematic = false;
+        //}
+        //else
+        //{
+        //    areaZone.velocity = Vector3.MoveTowards(areaZone.velocity, nVel, speedAccel * Time.deltaTime);
+        //}
+
+        areaZone.velocity = Vector3.MoveTowards(areaZone.velocity, nVel, speedAccel * Time.deltaTime);
+
     }
 }
