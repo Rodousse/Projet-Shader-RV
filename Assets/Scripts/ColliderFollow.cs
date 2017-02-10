@@ -13,6 +13,6 @@ public class ColliderFollow : MonoBehaviour {
     }
 	
 	void Update () {
-        m_collider.center = new Vector3(m_camera.transform.localPosition.x, 1.5f, m_camera.transform.localPosition.z);
+        m_collider.center = new Vector3(m_camera.transform.localPosition.x, 0.6f, m_camera.transform.localPosition.z);
     }
 }
