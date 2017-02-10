@@ -28,7 +28,7 @@ public class HandlingJoint : MonoBehaviour
             else
             {
                 m_joint.connectedBody = null;
-                if(m_target)
+                if(m_target && !m_target.GetComponent<ConfigurableJoint>())
                     m_target.freezeRotation = false;
             }
         }
@@ -63,7 +63,7 @@ public class HandlingJoint : MonoBehaviour
 
     public void OnTriggerExit(Collider other)
     {
-        if(!m_isHolding && m_target == other.GetComponent<Rigidbody>())
+        if(!m_isHolding && other.GetComponent<Rigidbody>() == m_target)
             m_target = null;
     }
 }
