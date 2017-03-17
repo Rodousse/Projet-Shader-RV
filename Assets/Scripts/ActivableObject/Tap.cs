@@ -31,7 +31,8 @@ public class Tap : IActivable
 
     sealed protected override void Refresh()
     {
-        m_audioSource.Play();
+        if(m_audioSource)
+            m_audioSource.Play();
         m_startTime = Time.time;
     }
 }

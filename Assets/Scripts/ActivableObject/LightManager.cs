@@ -11,7 +11,12 @@ public class LightManager : IActivable
     {
         foreach (GameObject light in m_lights)
         {
+            print(light.GetComponent<MeshRenderer>());
+
+
             light.GetComponent<MeshRenderer>().sharedMaterial = m_materials[m_enabled ? 0 : 1];
+
+
             light.GetComponentInChildren<Light>().enabled = m_enabled;
         }
     }
